@@ -9,8 +9,10 @@ import java.util.*;
 
 public class CompanyOrders {
 
+    private static final Config COMPANY_CONFIG = new Config();
+
     private static Double getTotalValue(List<Batch> batchList) {
-        return batchList.stream().reduce(0.0, (sub, batch) -> sub + batch.getBatchValueInUSD(), Double::sum);
+        return batchList.stream().reduce(0.0, (sub, batch) -> sub + batch.getBatchValueInUSD(), Double::sum) / COMPANY_CONFIG.RATE;
     }
 
     private static Integer getTotalQuantity(List<Batch> batchList) {
@@ -57,10 +59,10 @@ public class CompanyOrders {
         System.out.println("Product\t\tTotal Quantity\t\tCurrency\t\tValue");
         int count = 0;
         for (Map.Entry<String, List<Batch>> entry : sortedProducts.entrySet()) {
-            if (count >= 10) {
+            if (count >= COMPANY_CONFIG.LIMIT) {
                 break;
             }
-            System.out.println(entry.getKey() + "\t\t" + getTotalQuantity(entry.getValue()) + "\t\tUSD\t\t" + getTotalValue(entry.getValue()));
+            System.out.println(entry.getKey() + "\t\t" + getTotalQuantity(entry.getValue()) + "\t\t" + COMPANY_CONFIG.CURRENCY + "\t\t" + COMPANY_CONFIG.decimalFormat.format(getTotalValue(entry.getValue())));
             count++;
         }
     }
